@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from datetime import datetime as dt, timedelta
 import datetime
 __test = 0
@@ -64,11 +66,6 @@ def str_timedelta(td):
     return pref + ' ' + suff
 
 
-def __sortkey(t):
-    todo = t[1]
-    if todo.dt is None:
-        return dt(2100, 1, 1)
-    return todo.dt
 
 if __test:
     print 'testing str_td'
@@ -101,6 +98,7 @@ if __name__ == '__main__':
 3 Complete todo
 4 View as ordered list
 5 Sort all
+6 View subjects, ordered by last check
 Which action? ''').strip()
         if act == '0':
             break
@@ -179,15 +177,30 @@ Which action? ''').strip()
                 for todo in subject.todos:
                     todos.append((name, todo))
 
+            def __sortkey4(t):
+                todo = t[1]
+                if todo.dt is None:
+                    return dt(2100, 1, 1)
+                return todo.dt
 
-            todos = sorted(todos, key=__sortkey)
+            todos = sorted(todos, key=__sortkey4)
             for name, todo in todos:
                 print '%-10s' % ('(%s)' % (name)), str(todo)
             skip_print = 1
         elif act == '5':
-            for name, subject in rems.iteritems():
-                subject.todos = sorted(subject.todos, key=__sortkey)
+            def __sortkey5(todo):
+                if todo.dt is None:
+                    return dt(2100, 1, 1)
+                return todo.dt
 
+            for name, subject in rems.iteritems():
+                subject.todos = sorted(subject.todos, key=__sortkey5)
+
+        elif act == '6':
+            sort_rems = sorted(rems.iteritems(), key=lambda t: t[1].last_time)
+            for name, subject in sort_rems:
+                print '%-20s Last checked %s' % (name, str_timedelta(subject.last_time - dt.now()))
+            skip_print = 1
 
 
 
