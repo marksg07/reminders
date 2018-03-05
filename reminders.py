@@ -65,7 +65,12 @@ def str_timedelta(td):
         return 'Now'
     return pref + ' ' + suff
 
-
+def cron_addreminder(text, at_dt):
+    print('crontab -l > mycron')
+    print('echo "%s zenity --notification --text \\"REMINDER\\n%s\\"" >> mycron' % 
+        (at_dt.strftime('%M %H %d %m %w'), text))
+    print('crontab mycron')
+    print('rm mycron')
 
 if __test:
     print 'testing str_td'
@@ -74,7 +79,6 @@ if __test:
     print str_timedelta(timedelta() - timedelta(0, 1800, 8))
     print str_timedelta(timedelta(1, 3600*18, 0))
     print str_timedelta(timedelta() - timedelta(1, 3600*18, 0))
-
 
 
 if __name__ == '__main__':
